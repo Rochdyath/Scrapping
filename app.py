@@ -1,8 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 
-url = 'https://www.ynov.com'
-
 class HTTP_Client():
     def __init__(self):
         self.user_agents = [
@@ -50,11 +48,13 @@ client = HTTP_Client()
 
 
 ## Exo 1
+# url = 'https://www.ynov.com'
 # text = client.get_req_text(url)
 # print(text[0:1000])
 
 
 ## Exo 2
+# url = 'https://www.ynov.com'
 # soup = client.get_req_soup(url)
 
 # H1_list = soup.find_all("H1")
@@ -77,17 +77,38 @@ client = HTTP_Client()
 
 
 ## Exo final
+def get_url(article):
+    url = article.find('a', href=True)
+    if url != None:
+        return url['href']
+    return None
+
+def get_title(article):
+    title = article.find('h2')
+    if title != None:
+        return title.get_text()
+    return None
+
+def get_texte(article):
+    texte = article.find('p')
+    if texte != None:
+        return texte.get_text()
+    return None
+
+def get_article_description(article):
+    description = {}
+    description['url'] = get_url(article)
+    description['title'] = get_title(article)
+    description['texte'] = get_texte(article)
+    return description
+
 url = 'https://www.lefigaro.fr/culture'
 soup = client.get_req_soup(url)
 articles = soup.find_all('article')
 res = []
 
 for article in articles:
-    description = {}
-    description['url'] = article.find('a', href=True)['href']
-    description['title'] = article.find('h2').get_text()
-    description['texte'] = article.find('p').get_text()
-    res.append(description)
-    break
+    res.append(get_article_description(article))
 
-print(res)
+for item in res:
+    print(item)
