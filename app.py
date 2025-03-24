@@ -37,7 +37,6 @@ class HTTP_Client():
             }
             res = requests.get(url, headers=header, timeout=self.max_wait)
             if (res.status_code != 200):
-                print(res.status_code, res.text)
                 continue
             soup = BeautifulSoup(res.text, 'html.parser')
             return soup
@@ -95,14 +94,28 @@ def get_texte(article):
         return texte.get_text()
     return None
 
+def get_categories(url):
+    categories = []
+    soup = client.get_req_soup(url)
+    if soup == None: return None
+    span = soup.select('span.fig-breadcrumb__text')
+    if span != None:
+        for s in span:
+            t = s.get_text()
+            if t != 'Accueil': categories.append(t)
+        return categories
+    return None
+
+
 def get_article_description(article):
     description = {}
     description['url'] = get_url(article)
-    description['title'] = get_title(article)
+    description['titre'] = get_title(article)
     description['texte'] = get_texte(article)
+    description['catégorie'] = get_categories(description['url'])
     return description
 
-url = 'https://www.lefigaro.fr/culture'
+url = 'https://www.lefigaro.fr/'
 soup = client.get_req_soup(url)
 articles = soup.find_all('article')
 res = []
