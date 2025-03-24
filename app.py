@@ -88,7 +88,7 @@ def get_title(article):
         return title.get_text()
     return None
 
-def get_texte(article):
+def get_description(article):
     texte = article.find('p')
     if texte != None:
         return texte.get_text()
@@ -107,13 +107,13 @@ def get_categories(url):
     return None
 
 
-def get_article_description(article):
-    description = {}
-    description['url'] = get_url(article)
-    description['titre'] = get_title(article)
-    description['texte'] = get_texte(article)
-    description['catégorie'] = get_categories(description['url'])
-    return description
+def get_article_infos(article):
+    infos = {}
+    infos['url'] = get_url(article)
+    infos['titre'] = get_title(article)
+    infos['description'] = get_description(article)
+    infos['catégorie'] = get_categories(infos['url'])
+    return infos
 
 url = 'https://www.lefigaro.fr/'
 soup = client.get_req_soup(url)
@@ -121,7 +121,7 @@ articles = soup.find_all('article')
 res = []
 
 for article in articles:
-    res.append(get_article_description(article))
+    res.append(get_article_infos(article))
 
 for item in res:
     print(item)
